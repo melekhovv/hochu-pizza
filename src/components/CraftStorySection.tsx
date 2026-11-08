@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import { Sparkles, ArrowRight, ChefHat } from 'lucide-react'
 
 export const CraftStorySection: React.FC = () => {
@@ -61,11 +62,17 @@ export const CraftStorySection: React.FC = () => {
   const current = steps[activeStep]
 
   return (
-    <section id="craft" className="py-20 sm:py-28 bg-card border-b border-border">
+    <section id="craft" className="py-20 sm:py-28 bg-card border-b border-border overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Editorial Header */}
-        <div className="max-w-3xl">
+        <motion.div
+          initial={{ opacity: 0, y: 25 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+          className="max-w-3xl"
+        >
           <span className="text-xs uppercase tracking-widest text-primary font-bold">
             Ремесленная школа Неаполя
           </span>
@@ -75,10 +82,16 @@ export const CraftStorySection: React.FC = () => {
           <p className="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
             Пока сетевой фастфуд ускоряет процесс химическими добавками и печет через 2 часа, мы вкладываем в каждую пиццу 36 часов созревания и ремесленный ручной труд.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Interactive Step Switcher Tabs */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 border-b border-border pb-6">
+        {/* Interactive Step Switcher Tabs with Stagger */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ type: 'spring', stiffness: 400, damping: 28, delay: 0.1 }}
+          className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 border-b border-border pb-6"
+        >
           {steps.map((s, idx) => {
             const isActive = activeStep === idx
             return (
@@ -115,20 +128,32 @@ export const CraftStorySection: React.FC = () => {
               </button>
             )
           })}
-        </div>
+        </motion.div>
 
         {/* Active Stage Showcase (Editorial Split Layout) */}
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
-          {/* Left Column: Photo with High Craft Details */}
-          <div className="lg:col-span-6 relative">
+          {/* Left Column: Photo with High Craft Details & AnimatePresence */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ type: 'spring', stiffness: 380, damping: 28, delay: 0.15 }}
+            className="lg:col-span-6 relative"
+          >
             <div className="relative rounded-2xl overflow-hidden border border-border shadow-xl bg-background aspect-4/3">
-              <img
-                src={current.image}
-                alt={current.title}
-                key={current.image}
-                className="w-full h-full object-cover animate-in fade-in zoom-in-95 duration-500"
-              />
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={current.image}
+                  src={current.image}
+                  alt={current.title}
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 1.02 }}
+                  transition={{ duration: 0.35, ease: 'easeOut' }}
+                  className="w-full h-full object-cover"
+                />
+              </AnimatePresence>
               
               {/* Floating Bottom Stamp */}
               <div className="absolute bottom-4 left-4 right-4 p-4 rounded-xl bg-background/90 backdrop-blur-md border border-border/60">
@@ -141,21 +166,35 @@ export const CraftStorySection: React.FC = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Column: Narrative & Technical Metrics */}
-          <div className="lg:col-span-6 flex flex-col justify-center space-y-6">
-            <div>
-              <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold">
-                Этап {current.stepNum} • {current.tagline}
-              </span>
-              <h3 className="text-2xl sm:text-3xl font-bold font-serif text-foreground mt-1 leading-snug">
-                {current.title}
-              </h3>
-              <p className="mt-4 text-base text-muted-foreground leading-relaxed">
-                {current.description}
-              </p>
-            </div>
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ type: 'spring', stiffness: 380, damping: 28, delay: 0.2 }}
+            className="lg:col-span-6 flex flex-col justify-center space-y-6"
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={current.id}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25 }}
+              >
+                <span className="font-mono text-xs uppercase tracking-widest text-primary font-bold">
+                  Этап {current.stepNum} • {current.tagline}
+                </span>
+                <h3 className="text-2xl sm:text-3xl font-bold font-serif text-foreground mt-1 leading-snug">
+                  {current.title}
+                </h3>
+                <p className="mt-4 text-base text-muted-foreground leading-relaxed">
+                  {current.description}
+                </p>
+              </motion.div>
+            </AnimatePresence>
 
             {/* Technical Specs Strip */}
             <div className="pt-4 border-t border-border grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -182,12 +221,18 @@ export const CraftStorySection: React.FC = () => {
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
-          </div>
+          </motion.div>
 
         </div>
 
-        {/* Master Pizzaiolo Quote Strip */}
-        <div className="mt-16 p-6 sm:p-8 rounded-2xl border border-border bg-background flex flex-col md:flex-row items-center justify-between gap-6">
+        {/* Master Pizzaiolo Quote Strip with Scale Spring */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96, y: 20 }}
+          whileInView={{ opacity: 1, scale: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ type: 'spring', stiffness: 380, damping: 28, delay: 0.25 }}
+          className="mt-16 p-6 sm:p-8 rounded-2xl border border-border bg-background flex flex-col md:flex-row items-center justify-between gap-6"
+        >
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 border border-primary/20">
               <ChefHat className="w-7 h-7" />
@@ -218,7 +263,7 @@ export const CraftStorySection: React.FC = () => {
               <span>Выпекание</span>
             </div>
           </div>
-        </div>
+        </motion.div>
 
       </div>
     </section>

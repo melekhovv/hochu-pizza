@@ -1,25 +1,31 @@
 import React from 'react'
+import { motion } from 'motion/react'
 import { Flame, MapPin, Phone, Clock } from 'lucide-react'
 
 export const Footer: React.FC = () => {
   return (
-    <footer id="contacts" className="bg-background text-foreground border-t border-border pt-16 pb-12">
+    <footer id="contacts" className="bg-background text-foreground border-t border-border pt-16 pb-12 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-border">
-          
+        <motion.div
+          initial={{ opacity: 0, y: 25 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-border"
+        >
           {/* Brand Col */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-md">
-                <Flame className="w-5 h-5 fill-current text-accent" />
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-primary/15 border border-primary/25 text-primary flex items-center justify-center shrink-0">
+                <Flame className="w-4 h-4 fill-primary/30" />
               </div>
-              <div>
-                <span className="text-xl font-bold tracking-tight text-foreground font-serif leading-none block">
-                  ХОЧУ ПИЦЦЫ!
+              <div className="flex items-baseline gap-2">
+                <span className="text-xl font-bold tracking-tight text-foreground font-serif leading-none">
+                  Хочу Пиццы!
                 </span>
-                <span className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
-                  Pizzeria & Forno a Legna
+                <span className="text-[11px] font-sans font-medium text-muted-foreground/80 tracking-wider uppercase">
+                  · forno a legna
                 </span>
               </div>
             </div>
@@ -113,12 +119,12 @@ export const Footer: React.FC = () => {
             </div>
           </div>
 
-        </div>
+        </motion.div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground text-center sm:text-left">
           <p>© 2026 «Хочу Пиццы!». Все права защищены.</p>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-6">
             <span className="hover:text-foreground cursor-pointer">Политика конфиденциальности</span>
             <span className="hover:text-foreground cursor-pointer">Условия доставки и оплаты</span>
           </div>

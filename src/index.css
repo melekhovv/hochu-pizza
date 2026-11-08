@@ -1,29 +1,7 @@
 @import "tailwindcss";
 
 @layer base {
-  :root {
-    --background: 38 25% 97%; /* #FBF8F3 warm sourdough dough / flour cream */
-    --foreground: 24 20% 12%; /* #221c19 espresso crust charcoal */
-    --card: 0 0% 100%;
-    --card-foreground: 24 20% 12%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 24 20% 12%;
-    --primary: 8 78% 46%; /* #D13518 wood-fired san marzano tomato red */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 36 24% 92%; /* #ECE5DC warm stone & semolina */
-    --secondary-foreground: 24 20% 15%;
-    --muted: 36 18% 92%;
-    --muted-foreground: 24 10% 42%;
-    --accent: 38 82% 50%; /* #E99C15 crispy golden crust */
-    --accent-foreground: 24 20% 12%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 32 16% 87%;
-    --input: 32 16% 87%;
-    --ring: 8 78% 46%;
-    --radius: 0.75rem;
-  }
-
+  :root,
   .dark {
     --background: 24 22% 8%; /* #171311 deep wood oven charred charcoal */
     --foreground: 36 25% 94%;
@@ -44,6 +22,8 @@
     --border: 24 14% 20%;
     --input: 24 14% 20%;
     --ring: 8 82% 52%;
+    --radius: 0.75rem;
+    color-scheme: dark;
   }
 }
 
@@ -83,6 +63,9 @@
 html {
   scroll-behavior: smooth;
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
 }
 
 body {
@@ -91,6 +74,17 @@ body {
   font-feature-settings: "rlig" 1, "calt" 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
+  position: relative;
+}
+
+#root {
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
+  position: relative;
 }
 
 /* Custom scrollbar */
@@ -108,3 +102,65 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--muted-foreground));
 }
+
+/* From Uiverse.io by Cevorob - Animated Burger Menu */
+.burger {
+  position: relative;
+  width: 40px;
+  height: 30px;
+  background: transparent;
+  cursor: pointer;
+  display: block;
+}
+
+.burger input {
+  display: none;
+}
+
+.burger span {
+  display: block;
+  position: absolute;
+  height: 4px;
+  width: 100%;
+  background: hsl(var(--foreground));
+  border-radius: 9px;
+  opacity: 1;
+  left: 0;
+  transform: rotate(0deg);
+  transition: 0.25s ease-in-out;
+}
+
+.burger span:nth-of-type(1) {
+  top: 0px;
+  transform-origin: left center;
+}
+
+.burger span:nth-of-type(2) {
+  top: 50%;
+  transform: translateY(-50%);
+  transform-origin: left center;
+}
+
+.burger span:nth-of-type(3) {
+  top: 100%;
+  transform-origin: left center;
+  transform: translateY(-100%);
+}
+
+.burger input:checked ~ span:nth-of-type(1) {
+  transform: rotate(45deg);
+  top: 0px;
+  left: 5px;
+}
+
+.burger input:checked ~ span:nth-of-type(2) {
+  width: 0%;
+  opacity: 0;
+}
+
+.burger input:checked ~ span:nth-of-type(3) {
+  transform: rotate(-45deg);
+  top: 28px;
+  left: 5px;
+}
+

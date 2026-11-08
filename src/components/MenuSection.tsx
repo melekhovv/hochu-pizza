@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import { Plus, Sliders } from 'lucide-react'
 import { MENU_ITEMS } from '../data/menu'
 import type { MenuItem, PizzaSize } from '../types/pizza'
@@ -7,13 +8,15 @@ import { Button } from './ui/Button'
 import { Badge } from './ui/Badge'
 import { Card, CardContent } from './ui/Card'
 import { formatPrice } from '../lib/utils'
+import { JellyRadio } from './ui/JellyRadio'
+import { FuseButton } from './ui/FuseButton'
 
 interface MenuSectionProps {
   onCustomizeItem: (item: MenuItem) => void
 }
 
 export const MenuSection: React.FC<MenuSectionProps> = ({ onCustomizeItem }) => {
-  const { addToCart } = useCart()
+  const { addToCart, removeMenuItem } = useCart()
   const [activeCategory, setActiveCategory] = useState<string>('all')
   const [activeFilter, setActiveFilter] = useState<'all' | 'veg' | 'spicy' | 'hits'>('all')
   
@@ -51,12 +54,23 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ onCustomizeItem }) => 
     addToCart(item, size)
   }
 
+  const handleRemove = (item: MenuItem) => {
+    const size = selectedSizes[item.id] || 28
+    removeMenuItem(item.id, size)
+  }
+
   return (
-    <section id="menu" className="py-16 sm:py-24 bg-background border-b border-border">
+    <section id="menu" className="py-16 sm:py-24 bg-background border-b border-border overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-border">
+        {/* Section Header with spring reveal */}
+        <motion.div
+          initial={{ opacity: 0, y: 25 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+          className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-border"
+        >
           <div>
             <h2 className="text-3xl sm:text-5xl font-bold font-serif tracking-tight text-foreground text-balance">
               Меню пиццерии
@@ -66,103 +80,124 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ onCustomizeItem }) => 
             </p>
           </div>
 
-          {/* Quick Dietary Filters */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-muted-foreground font-medium mr-1 hidden sm:inline">
+          {/* Quick Dietary Filters with JellyRadio (Mobile scroll safe) */}
+          <div className="flex items-center gap-2 max-w-full overflow-x-auto no-scrollbar py-1">
+            <span className="text-xs text-muted-foreground font-medium mr-1 hidden sm:inline shrink-0">
               Фильтр:
             </span>
-            <button
-              type="button"
-              onClick={() => setActiveFilter('all')}
-              className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition-colors cursor-pointer ${
-                activeFilter === 'all'
-                  ? 'bg-foreground text-background border-foreground'
-                  : 'bg-card text-muted-foreground border-border hover:text-foreground'
-              }`}
-            >
-              Все
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveFilter('hits')}
-              className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition-colors cursor-pointer ${
-                activeFilter === 'hits'
-                  ? 'bg-primary text-primary-foreground border-primary'
-                  : 'bg-card text-muted-foreground border-border hover:text-foreground'
-              }`}
-            >
-              Хиты гостей
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveFilter('veg')}
-              className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition-colors cursor-pointer ${
-                activeFilter === 'veg'
-                  ? 'bg-emerald-700 text-white border-emerald-700'
-                  : 'bg-card text-muted-foreground border-border hover:text-foreground'
-              }`}
-            >
-              Вегетарианские
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveFilter('spicy')}
-              className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition-colors cursor-pointer ${
-                activeFilter === 'spicy'
-                  ? 'bg-destructive text-destructive-foreground border-destructive'
-                  : 'bg-card text-muted-foreground border-border hover:text-foreground'
-              }`}
-            >
-              Острые
-            </button>
+            <div className="shrink-0">
+              <JellyRadio
+                items={[
+                  { value: 'all', label: 'Все' },
+                  { value: 'hits', label: 'Хиты гостей' },
+                  { value: 'veg', label: 'Вегетарианские' },
+                  { value: 'spicy', label: 'Острые' },
+                ]}
+                value={activeFilter}
+                onChange={(val) => setActiveFilter(val as 'all' | 'veg' | 'spicy' | 'hits')}
+                chipColor="#251e1b"
+                activeColor="#f5f5f5"
+                textColor="#b3aaa4"
+                activeTextColor="#171311"
+                size="sm"
+                gap={6}
+                radius={10}
+                swell={0.14}
+                barge={4}
+                shrink={0.03}
+                jelly={1}
+                bounce={0.25}
+                ariaLabel="Диетические фильтры"
+              />
+            </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Category Horizontal Scrolling Tabs */}
-        <div className="py-6 overflow-x-auto no-scrollbar flex items-center gap-2 border-b border-border/60">
-          {categories.map((cat) => {
-            const isActive = activeCategory === cat.id
-            return (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setActiveCategory(cat.id)}
-                className={`whitespace-nowrap px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 flex items-center gap-2 cursor-pointer ${
-                  isActive
-                    ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'bg-secondary/60 text-secondary-foreground hover:bg-secondary'
-                }`}
-              >
-                <span>{cat.label}</span>
-                <span
-                  className={`text-xs px-1.5 py-0.2 rounded-md font-mono tabular-nums ${
-                    isActive ? 'bg-primary-foreground/20 text-white' : 'bg-background/80 text-muted-foreground'
-                  }`}
-                >
-                  {cat.count}
+        {/* Category Horizontal Scrolling Tabs with JellyRadio */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ type: 'spring', stiffness: 400, damping: 28, delay: 0.1 }}
+          className="py-2 overflow-x-auto no-scrollbar flex items-center border-b border-border/60"
+        >
+          <JellyRadio
+            items={categories.map((cat) => ({
+              value: cat.id,
+              label: (
+                <span className="flex items-center gap-2">
+                  <span>{cat.label}</span>
+                  <span
+                    className={`text-xs px-1.5 py-0.5 rounded-md font-mono tabular-nums transition-colors ${
+                      activeCategory === cat.id
+                        ? 'bg-white/20 text-white font-semibold'
+                        : 'bg-background/80 text-muted-foreground'
+                    }`}
+                  >
+                    {cat.count}
+                  </span>
                 </span>
-              </button>
-            )
-          })}
-        </div>
+              ),
+            }))}
+            value={activeCategory}
+            onChange={(val) => setActiveCategory(val)}
+            chipColor="#251e1b"
+            activeColor="#d13518"
+            textColor="#d5cec8"
+            activeTextColor="#ffffff"
+            size="md"
+            gap={8}
+            radius={14}
+            swell={0.16}
+            barge={5}
+            shrink={0.04}
+            jelly={1}
+            bounce={0.25}
+            stiffness={580}
+            ariaLabel="Категории меню"
+          />
+        </motion.div>
 
-        {/* Items Grid */}
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredItems.map((item) => {
-            const isPizza = item.category === 'neapolitan' || item.category === 'roman' || item.category === 'chef'
-            const currentSize = selectedSizes[item.id] || 28
-            const currentPrice = (isPizza && currentSize === 33 && item.priceLarge)
-              ? item.priceLarge
-              : item.basePrice
-            const currentWeight = (isPizza && currentSize === 33 && item.weightLargeGrams)
-              ? item.weightLargeGrams
-              : item.weightGrams
+        {/* Items Grid with Spring Layout Animation */}
+        <motion.div
+          layout
+          className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
+          <AnimatePresence mode="popLayout">
+            {filteredItems.map((item, index) => {
+              const isPizza = item.category === 'neapolitan' || item.category === 'roman' || item.category === 'chef'
+              const currentSize = selectedSizes[item.id] || 28
+              const currentPrice = (isPizza && currentSize === 33 && item.priceLarge)
+                ? item.priceLarge
+                : item.basePrice
+              const currentWeight = (isPizza && currentSize === 33 && item.weightLargeGrams)
+                ? item.weightLargeGrams
+                : item.weightGrams
 
-            return (
-              <Card
-                key={item.id}
-                className="overflow-hidden flex flex-col justify-between hover:shadow-lg hover:border-primary/40 transition-all duration-300 group"
-              >
+              return (
+                <motion.div
+                  key={item.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.94, y: 16 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{
+                    opacity: 0,
+                    scale: 0.94,
+                    y: -10,
+                    transition: { duration: 0.16, ease: 'easeIn' },
+                  }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 440,
+                    damping: 28,
+                    mass: 0.8,
+                    delay: Math.min(index * 0.025, 0.15),
+                  }}
+                  className="flex flex-col h-full"
+                >
+                  <Card
+                    className="h-full overflow-hidden flex flex-col justify-between hover:shadow-lg hover:border-primary/40 transition-all duration-300 group"
+                  >
                 {/* Image & Tags Container */}
                 <div className="relative aspect-4/3 overflow-hidden bg-muted">
                   <img
@@ -286,23 +321,35 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ onCustomizeItem }) => 
                           </Button>
                         )}
 
-                        <Button
-                          variant="default"
-                          size="default"
-                          onClick={() => handleAdd(item)}
-                          className="font-semibold px-4"
-                        >
-                          <Plus className="w-4 h-4 mr-1" />
-                          <span>В корзину</span>
-                        </Button>
+                        <FuseButton
+                          label="В корзину"
+                          undoLabel="Убрать"
+                          doneLabel="В корзине"
+                          icon={<Plus className="w-3.5 h-3.5" />}
+                          color="#ffffff"
+                          background="#d13518"
+                          fuseColor="#f5a524"
+                          size="sm"
+                          radius={14}
+                          undoWindow={4500}
+                          fuse="outline"
+                          fuseThickness={1.5}
+                          commitOn="press"
+                          pauseOnHover
+                          settle="reset"
+                          onCommit={() => handleAdd(item)}
+                          onUndo={() => handleRemove(item)}
+                        />
                       </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            )
-          })}
-        </div>
+            </motion.div>
+          )
+        })}
+      </AnimatePresence>
+    </motion.div>
 
         {/* Empty state if filter yields zero */}
         {filteredItems.length === 0 && (

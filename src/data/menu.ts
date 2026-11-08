@@ -309,6 +309,26 @@ export const REVIEWS = [
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
     dish: 'Дьявола с ндуйей',
   },
+  {
+    id: 'rev-4',
+    author: 'София Морозова',
+    role: 'Фуд-фотограф',
+    rating: 5,
+    date: '2 недели назад',
+    text: 'Сырный бортик с моцареллой Fior di Latte — это гастрономический восторг! Пышный, сливочный, с хрустящей корочкой. А аромат дровяной печи переносит прямо в Неаполь.',
+    avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80',
+    dish: 'Четыре Сыра & Белый Трюфель',
+  },
+  {
+    id: 'rev-5',
+    author: 'Дмитрий Радзивилл',
+    role: 'Шеф-сомелье',
+    rating: 5,
+    date: 'В этом месяце',
+    text: 'Идеальный баланс хруста и сочности. Тесто ферментированное и невесомое, никакой тяжести, а корочка издает тот самый аутентичный звук при нарезке колесом. 10 из 10.',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
+    dish: 'Страчателла & Трюфельный крем',
+  },
 ]
 
 export const FAQ_ITEMS = [

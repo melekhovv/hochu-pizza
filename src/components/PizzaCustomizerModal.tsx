@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import { X, Check } from 'lucide-react'
 import { AVAILABLE_TOPPINGS } from '../data/menu'
 import type { MenuItem, Topping, PizzaSize, CrustType } from '../types/pizza'
@@ -39,8 +40,16 @@ export const PizzaCustomizerModal: React.FC<PizzaCustomizerModalProps> = ({
   const [selectedToppings, setSelectedToppings] = useState<Topping[]>([])
   const [notes, setNotes] = useState('')
 
-  if (!isOpen) return null
+  useEffect(() => {
+    if (!isOpen) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, onClose])
 
+  // Calculations
   const isBaseCustom = !initialItem
   const basePrice = (size === 33 && defaultBaseItem.priceLarge)
     ? defaultBaseItem.priceLarge
@@ -77,11 +86,38 @@ export const PizzaCustomizerModal: React.FC<PizzaCustomizerModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div
-        className="relative w-full max-w-2xl bg-card border border-border rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+          {/* Backdrop with spring/fade */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
+            className="fixed inset-0 bg-black/65 backdrop-blur-xs cursor-pointer"
+            onClick={onClose}
+          />
+
+          {/* Modal Panel with elastic spring */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92, y: 16 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{
+              opacity: 0,
+              scale: 0.94,
+              y: 12,
+              transition: { duration: 0.18, ease: 'easeIn' },
+            }}
+            transition={{
+              type: 'spring',
+              stiffness: 420,
+              damping: 28,
+              mass: 0.85,
+            }}
+            className="relative z-10 w-full max-w-2xl bg-card border border-border rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
         {/* Modal Header */}
         <div className="p-6 border-b border-border flex items-start justify-between bg-muted/40">
           <div>
@@ -294,7 +330,9 @@ export const PizzaCustomizerModal: React.FC<PizzaCustomizerModalProps> = ({
             </Button>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
+  )}
+</AnimatePresence>
   )
 }

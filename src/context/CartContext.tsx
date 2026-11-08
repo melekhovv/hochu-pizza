@@ -1,6 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import type { CartItem, MenuItem, PizzaSize, CrustType, Topping } from '../types/pizza'
 
+export interface CartToast {
+  id: string
+  title: string
+  subtitle?: string
+  image?: string
+  price?: number
+  actionType: 'add' | 'remove'
+}
+
 interface CartContextType {
   items: CartItem[]
   addToCart: (
@@ -11,11 +20,14 @@ interface CartContextType {
     specialInstructions?: string
   ) => void
   removeFromCart: (cartItemId: string) => void
+  removeMenuItem: (menuItemId: string, size?: PizzaSize) => void
   updateQuantity: (cartItemId: string, delta: number) => void
   clearCart: () => void
   isCartOpen: boolean
   openCart: () => void
   closeCart: () => void
+  toast: CartToast | null
+  dismissToast: () => void
   promoCode: string
   discountPercent: number
   applyPromo: (code: string) => { success: boolean; message: string }
@@ -43,6 +55,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   })
 
   const [isCartOpen, setIsCartOpen] = useState(false)
+  const [toast, setToast] = useState<CartToast | null>(null)
   const [promoCode, setPromoCode] = useState('')
   const [discountPercent, setDiscountPercent] = useState(0)
 
@@ -53,6 +66,18 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // storage unavailable
     }
   }, [items])
+
+  useEffect(() => {
+    if (!toast) return
+    const timer = setTimeout(() => {
+      setToast(null)
+    }, 4500)
+    return () => clearTimeout(timer)
+  }, [toast])
+
+  const openCart = () => setIsCartOpen(true)
+  const closeCart = () => setIsCartOpen(false)
+  const dismissToast = () => setToast(null)
 
   const addToCart = (
     item: MenuItem,
@@ -105,7 +130,40 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     })
 
-    setIsCartOpen(true)
+    // Show toast notification instead of opening cart automatically
+    setToast({
+      id: Date.now().toString(),
+      title: 'Добавлено в корзину',
+      subtitle: `${item.name}${isPizza && size ? ` (${size} см)` : ''}`,
+      image: item.image,
+      price: unitPrice,
+      actionType: 'add',
+    })
+  }
+
+  const removeMenuItem = (menuItemId: string, size?: PizzaSize) => {
+    let removedName = ''
+    setItems((prevItems) => {
+      const idx = prevItems.findLastIndex(
+        (i) => i.menuItemId === menuItemId && (!size || i.size === size)
+      )
+      if (idx === -1) return prevItems
+      const target = prevItems[idx]
+      removedName = target.name
+      if (target.quantity > 1) {
+        const next = [...prevItems]
+        next[idx] = { ...target, quantity: target.quantity - 1 }
+        return next
+      }
+      return prevItems.filter((_, i) => i !== idx)
+    })
+
+    setToast({
+      id: Date.now().toString(),
+      title: 'Удалено из корзины',
+      subtitle: removedName,
+      actionType: 'remove',
+    })
   }
 
   const removeFromCart = (cartItemId: string) => {
@@ -128,34 +186,30 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const clearCart = () => {
     setItems([])
-    setPromoCode('')
-    setDiscountPercent(0)
   }
 
   const applyPromo = (code: string) => {
-    const clean = code.trim().toUpperCase()
-    if (clean === 'ХОЧУ15' || clean === 'PIZZA15' || clean === 'ДРОВА') {
-      setPromoCode(clean)
+    const cleaned = code.trim().toUpperCase()
+    if (cleaned === 'ХОЧУ15' || cleaned === 'HOCHU15') {
+      setPromoCode(cleaned)
       setDiscountPercent(15)
-      return { success: true, message: 'Промокод применён! Скидка 15% на всё меню' }
+      return { success: true, message: 'Промокод активирован: скидка 15% на заказ!' }
     }
-    if (clean === 'ХОЧУ20' || clean === 'FIRST') {
-      setPromoCode(clean)
+    if (cleaned === 'ХОЧУ20' || cleaned === 'HOCHU20') {
+      setPromoCode(cleaned)
       setDiscountPercent(20)
-      return { success: true, message: 'Промокод применён! Скидка 20% на первый заказ' }
+      return { success: true, message: 'Секретный промокод шефа: скидка 20%!' }
     }
-    return { success: false, message: 'Неверный или устаревший промокод. Попробуйте ХОЧУ15' }
+    return { success: false, message: 'Промокод не найден или срок действия истек' }
   }
 
   const totalCount = items.reduce((sum, item) => sum + item.quantity, 0)
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const discountAmount = Math.round((subtotal * discountPercent) / 100)
-  const afterDiscount = subtotal - discountAmount
-  
   const freeDeliveryThreshold = 1200
-  const deliveryFee = subtotal === 0 ? 0 : afterDiscount >= freeDeliveryThreshold ? 0 : 190
-  const totalAmount = afterDiscount + deliveryFee
-  const freeDeliveryRemaining = Math.max(0, freeDeliveryThreshold - afterDiscount)
+  const freeDeliveryRemaining = Math.max(0, freeDeliveryThreshold - (subtotal - discountAmount))
+  const deliveryFee = (subtotal - discountAmount) >= freeDeliveryThreshold || totalCount === 0 ? 0 : 190
+  const totalAmount = Math.max(0, subtotal - discountAmount + (totalCount > 0 ? deliveryFee : 0))
 
   return (
     <CartContext.Provider
@@ -163,11 +217,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         items,
         addToCart,
         removeFromCart,
+        removeMenuItem,
         updateQuantity,
         clearCart,
         isCartOpen,
-        openCart: () => setIsCartOpen(true),
-        closeCart: () => setIsCartOpen(false),
+        openCart,
+        closeCart,
+        toast,
+        dismissToast,
         promoCode,
         discountPercent,
         applyPromo,
@@ -188,7 +245,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export const useCart = () => {
   const context = useContext(CartContext)
   if (!context) {
-    throw new Error('useCart must be used within a CartProvider')
+    throw new Error('useCart must be used within CartProvider')
   }
   return context
 }

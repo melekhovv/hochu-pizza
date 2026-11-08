@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Flame, ShoppingBag, Moon, Sun, Menu, X, Phone, Clock, MapPin } from 'lucide-react'
+import { motion, AnimatePresence } from 'motion/react'
+import { Flame, ShoppingBag, Phone, Clock, MapPin } from 'lucide-react'
 import { useCart } from '../context/CartContext'
-import { useTheme } from '../context/ThemeContext'
 import { Button } from './ui/Button'
 import { formatPrice } from '../lib/utils'
+import { JellyRadio } from './ui/JellyRadio'
 
 interface NavbarProps {
   onOpenCustomizer: () => void
@@ -12,9 +13,9 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ onOpenCustomizer, onOpenReservation }) => {
   const { totalCount, subtotal, openCart } = useCart()
-  const { theme, toggleTheme } = useTheme()
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [activeNav, setActiveNav] = useState('menu')
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,37 +26,77 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCustomizer, onOpenReservat
   }, [])
 
   const navLinks = [
-    { label: 'Меню', href: '#menu' },
-    { label: 'О печи и тесте', href: '#craft' },
-    { label: 'Конструктор', action: onOpenCustomizer },
-    { label: 'Доставка', href: '#delivery' },
-    { label: 'Бронь стола', action: onOpenReservation },
-    { label: 'Отзывы', href: '#reviews' },
-    { label: 'Контакты', href: '#contacts' },
+    { value: 'menu', label: 'Меню', href: '#menu' },
+    { value: 'craft', label: 'О печи и тесте', href: '#craft' },
+    { value: 'customizer', label: 'Конструктор', action: onOpenCustomizer },
+    { value: 'delivery', label: 'Доставка', href: '#delivery' },
+    { value: 'reservation', label: 'Бронь стола', action: onOpenReservation },
+    { value: 'reviews', label: 'Отзывы', href: '#reviews' },
+    { value: 'contacts', label: 'Контакты', href: '#contacts' },
   ]
+
+  // Sync active nav item with scroll position
+  useEffect(() => {
+    const sectionIds = ['contacts', 'reviews', 'reservation', 'delivery', 'craft', 'menu']
+    const handleScrollNav = () => {
+      const scrollPos = window.scrollY + 200
+      for (const id of sectionIds) {
+        const el = document.getElementById(id)
+        if (el && el.offsetTop <= scrollPos) {
+          setActiveNav(id)
+          return
+        }
+      }
+    }
+    window.addEventListener('scroll', handleScrollNav, { passive: true })
+    return () => window.removeEventListener('scroll', handleScrollNav)
+  }, [])
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileMenuOpen(false)
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [mobileMenuOpen])
+
+  const handleNavChange = (val: string) => {
+    setActiveNav(val)
+    const target = navLinks.find((l) => l.value === val)
+    if (!target) return
+    if (target.href) {
+      const el = document.querySelector(target.href)
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' })
+      } else {
+        window.location.hash = target.href
+      }
+    } else if (target.action) {
+      target.action()
+    }
+  }
 
   return (
     <>
-      {/* Top Announcement Bar */}
-      <div className="bg-primary text-primary-foreground text-xs py-2 px-4 select-none">
-        <div className="max-w-7xl mx-auto flex items-center justify-between text-xs sm:text-sm font-medium">
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-2 h-2 rounded-full bg-accent animate-pulse" />
-            <span className="hidden sm:inline">Дровяная печь разогрета до 450°C</span>
-            <span className="sm:hidden">Печь 450°C</span>
-            <span className="opacity-70">•</span>
-            <span>Доставка горячей за 30–40 мин</span>
+      {/* Top Subtle Info Bar */}
+      <div className="bg-card/50 border-b border-border/40 text-muted-foreground text-xs py-1.5 px-3 sm:px-4 select-none backdrop-blur-xs overflow-hidden w-full">
+        <div className="max-w-7xl mx-auto flex items-center justify-between text-[11px] sm:text-xs gap-2 min-w-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 truncate min-w-0">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary/70 shrink-0" />
+            <span className="hidden sm:inline">Дровяная печь разогрета до 450°C • Доставка горячей за 30–40 мин</span>
+            <span className="sm:hidden truncate">Печь 450°C • 30–40 мин</span>
           </div>
-          <div className="flex items-center gap-4 text-xs">
-            <div className="hidden md:flex items-center gap-1 opacity-90">
-              <Clock className="w-3.5 h-3.5" />
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="hidden md:flex items-center gap-1.5 text-muted-foreground/80">
+              <Clock className="w-3.5 h-3.5 opacity-70" />
               <span>Ежедневно 11:00 — 23:00</span>
             </div>
             <a
               href="tel:+74959210088"
-              className="flex items-center gap-1 font-semibold hover:underline"
+              className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors font-medium whitespace-nowrap text-[11px] sm:text-xs"
             >
-              <Phone className="w-3.5 h-3.5" />
+              <Phone className="w-3 h-3 opacity-70 shrink-0" />
               <span>+7 (495) 921-00-88</span>
             </a>
           </div>
@@ -70,84 +111,61 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCustomizer, onOpenReservat
             : 'bg-background/80 backdrop-blur-sm border-transparent'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between gap-4">
           {/* Logo & Brand */}
           <a
             href="#"
-            className="flex items-center gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg py-1"
+            className="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg py-1 select-none shrink-0"
           >
-            <div className="w-11 h-11 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-md shadow-primary/25 transition-transform duration-200 group-hover:scale-105">
-              <Flame className="w-6 h-6 fill-current text-accent" />
+            <div className="w-8 h-8 rounded-lg bg-primary/15 border border-primary/25 text-primary flex items-center justify-center transition-colors group-hover:bg-primary/25 group-hover:border-primary/40 shrink-0">
+              <Flame className="w-4 h-4 fill-primary/30" />
             </div>
-            <div className="flex flex-col text-left">
-              <span className="text-xl sm:text-2xl font-bold tracking-tight text-foreground font-serif leading-none">
-                ХОЧУ ПИЦЦЫ!
+            <div className="flex items-baseline gap-2">
+              <span className="text-lg sm:text-xl font-bold tracking-tight text-foreground font-serif group-hover:text-primary transition-colors leading-none">
+                Хочу Пиццы!
               </span>
-              <span className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground mt-0.5">
-                Pizzeria & Forno a Legna
+              <span className="hidden xl:inline-block text-[11px] font-sans font-medium text-muted-foreground/80 tracking-wider uppercase">
+                · forno a legna
               </span>
             </div>
           </a>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
-            {navLinks.map((link, idx) => (
-              <React.Fragment key={idx}>
-                {link.href ? (
-                  <a
-                    href={link.href}
-                    className="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted/60 rounded-md transition-colors"
-                  >
-                    {link.label}
-                  </a>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={link.action}
-                    className="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted/60 rounded-md transition-colors cursor-pointer"
-                  >
-                    {link.label}
-                  </button>
-                )}
-              </React.Fragment>
-            ))}
-          </nav>
+          {/* Desktop Navigation with JellyRadio */}
+          <div className="hidden lg:flex items-center shrink-0">
+            <JellyRadio
+              items={navLinks.map((link) => ({
+                value: link.value,
+                label: link.label,
+              }))}
+              value={activeNav}
+              onChange={handleNavChange}
+              chipColor="transparent"
+              activeColor="#251e1b"
+              textColor="#b5ada7"
+              activeTextColor="#ffffff"
+              size="sm"
+              gap={4}
+              radius={10}
+              swell={0.12}
+              barge={4}
+              shrink={0.03}
+              jelly={0.8}
+              bounce={0.25}
+              stiffness={600}
+              ariaLabel="Основная навигация"
+            />
+          </div>
 
           {/* Right Action Icons & Cart */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Theme Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              aria-label="Переключить тему оформления"
-              className="text-foreground/80 hover:text-foreground"
-            >
-              {theme === 'dark' ? (
-                <Sun className="w-5 h-5 text-accent" />
-              ) : (
-                <Moon className="w-5 h-5 text-muted-foreground" />
-              )}
-            </Button>
-
-            {/* Quick Reservation Button (Desktop) */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onOpenReservation}
-              className="hidden md:inline-flex border-primary/30 text-primary hover:bg-primary/5 hover:border-primary"
-            >
-              Бронь стола
-            </Button>
-
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* Cart Trigger Button */}
             <Button
               variant="default"
               onClick={openCart}
-              className="relative flex items-center gap-2.5 px-3.5 sm:px-5 font-semibold"
+              className="relative flex items-center gap-2 px-3.5 sm:px-4.5 font-semibold whitespace-nowrap cursor-pointer"
               aria-label={`Корзина: ${totalCount} товаров на сумму ${formatPrice(subtotal)}`}
             >
-              <ShoppingBag className="w-5 h-5" />
+              <ShoppingBag className="w-4 h-4" />
               <span className="hidden sm:inline">Корзина</span>
               {totalCount > 0 && (
                 <span className="font-mono text-xs bg-accent text-accent-foreground px-2 py-0.5 rounded-full font-bold ml-0.5">
@@ -161,69 +179,89 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCustomizer, onOpenReservat
               )}
             </Button>
 
-            {/* Mobile Menu Trigger */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden text-foreground"
-              aria-label={mobileMenuOpen ? 'Закрыть меню' : 'Открыть меню'}
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </Button>
+            {/* Animated Uiverse Burger Trigger */}
+            <div className="lg:hidden flex items-center justify-center w-10 h-10 shrink-0">
+              <label
+                className="burger scale-[0.68] origin-center cursor-pointer select-none text-foreground"
+                aria-label={mobileMenuOpen ? 'Закрыть меню' : 'Открыть меню'}
+              >
+                <input
+                  type="checkbox"
+                  checked={mobileMenuOpen}
+                  onChange={(e) => setMobileMenuOpen(e.target.checked)}
+                />
+                <span />
+                <span />
+                <span />
+              </label>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Mobile Drawer Navigation */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-30 lg:hidden bg-background/95 backdrop-blur-md pt-28 px-6 pb-8 flex flex-col justify-between overflow-y-auto animate-in fade-in duration-200">
-          <nav className="flex flex-col space-y-3">
-            {navLinks.map((link, idx) => (
-              <React.Fragment key={idx}>
-                {link.href ? (
-                  <a
-                    href={link.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-xl font-medium text-foreground py-2 border-b border-border/50 hover:text-primary transition-colors"
-                  >
-                    {link.label}
-                  </a>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMobileMenuOpen(false)
-                      link.action?.()
-                    }}
-                    className="text-xl font-medium text-foreground py-2 border-b border-border/50 hover:text-primary transition-colors text-left cursor-pointer"
-                  >
-                    {link.label}
-                  </button>
-                )}
-              </React.Fragment>
-            ))}
-          </nav>
+      {/* Mobile Drawer Navigation with Spring Animation & Generous Spacing */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10, transition: { duration: 0.18, ease: 'easeIn' } }}
+            transition={{ type: 'spring', stiffness: 420, damping: 30 }}
+            className="fixed inset-0 z-30 lg:hidden bg-background/98 backdrop-blur-xl pt-32 sm:pt-36 px-6 pb-8 flex flex-col justify-between overflow-y-auto"
+          >
+            <div className="pt-4">
+              <nav className="flex flex-col space-y-2">
+                {navLinks.map((link) => (
+                  <React.Fragment key={link.value}>
+                    {link.href ? (
+                      <a
+                        href={link.href}
+                        onClick={() => {
+                          setMobileMenuOpen(false)
+                          setActiveNav(link.value)
+                        }}
+                        className="text-lg font-medium text-foreground py-2.5 border-b border-border/40 hover:text-primary transition-colors flex items-center justify-between"
+                      >
+                        <span>{link.label}</span>
+                      </a>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMobileMenuOpen(false)
+                          setActiveNav(link.value)
+                          link.action?.()
+                        }}
+                        className="text-lg font-medium text-foreground py-2.5 border-b border-border/40 hover:text-primary transition-colors text-left cursor-pointer flex items-center justify-between"
+                      >
+                        <span>{link.label}</span>
+                      </button>
+                    )}
+                  </React.Fragment>
+                ))}
+              </nav>
+            </div>
 
-          <div className="mt-8 space-y-4 pt-6 border-t border-border">
-            <div className="flex items-center gap-3 text-muted-foreground text-sm">
-              <MapPin className="w-4 h-4 text-primary shrink-0" />
-              <span>ул. Большая Никитская, 14 (м. Арбатская)</span>
+            <div className="mt-8 space-y-4 pt-6 border-t border-border">
+              <div className="flex items-center gap-3 text-muted-foreground text-sm">
+                <MapPin className="w-4 h-4 text-primary shrink-0" />
+                <span>ул. Большая Никитская, 14 (м. Арбатская)</span>
+              </div>
+              <div className="flex items-center gap-3 text-muted-foreground text-sm">
+                <Clock className="w-4 h-4 text-primary shrink-0" />
+                <span>Ежедневно с 11:00 до 23:00</span>
+              </div>
+              <a
+                href="tel:+74959210088"
+                className="flex items-center justify-center gap-2 w-full py-3 bg-secondary text-secondary-foreground rounded-lg font-medium text-base hover:bg-secondary/80 transition-colors"
+              >
+                <Phone className="w-4 h-4" />
+                <span>+7 (495) 921-00-88</span>
+              </a>
             </div>
-            <div className="flex items-center gap-3 text-muted-foreground text-sm">
-              <Clock className="w-4 h-4 text-primary shrink-0" />
-              <span>Ежедневно с 11:00 до 23:00</span>
-            </div>
-            <a
-              href="tel:+74959210088"
-              className="flex items-center justify-center gap-2 w-full py-3 bg-secondary text-secondary-foreground rounded-lg font-medium text-base"
-            >
-              <Phone className="w-4 h-4" />
-              <span>+7 (495) 921-00-88</span>
-            </a>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }

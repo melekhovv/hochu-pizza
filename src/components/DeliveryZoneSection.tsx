@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { motion } from 'motion/react'
 import {
   Truck,
   MapPin,
@@ -90,12 +91,39 @@ export const DeliveryZoneSection: React.FC = () => {
     }
   }
 
+  const pillars = [
+    {
+      icon: <Flame className="w-6 h-6" />,
+      title: 'Подогрев 70°C в термосумке',
+      desc: 'Внутри каждой сумки установлен термоэлемент. Пицца не успевает остыть даже в снег и дождь: сыр тянется шёлком, а сырный бортик остается мягким.',
+      badge: 'Температура при вручении ≥ 65°C',
+    },
+    {
+      icon: <Wind className="w-6 h-6" />,
+      title: 'Коробки с выводом пара',
+      desc: 'Специальная микроперфорация отводит конденсат наружу, не давая пару оседать каплями на дно. Бортик остается хрустящим, а не размокшим.',
+      badge: '100% защита от влажного теста',
+    },
+    {
+      icon: <Truck className="w-6 h-6" />,
+      title: 'Собственные байкеры и курьеры',
+      desc: 'Не собираем по пути 5 сторонних заказов. Курьер забирает пиццу прямо с лопаты пиццайоло и мчит по оптимальному маршруту только к вам.',
+      badge: 'Среднее время: 31 минута',
+    },
+  ]
+
   return (
-    <section id="delivery" className="py-20 sm:py-28 bg-background border-b border-border">
+    <section id="delivery" className="py-20 sm:py-28 bg-background border-b border-border overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Section Header */}
-        <div className="max-w-3xl">
+        {/* Section Header with spring reveal */}
+        <motion.div
+          initial={{ opacity: 0, y: 25 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+          className="max-w-3xl"
+        >
           <span className="text-xs uppercase tracking-widest text-primary font-bold">
             Горячая доставка за 30 минут
           </span>
@@ -105,64 +133,50 @@ export const DeliveryZoneSection: React.FC = () => {
           <p className="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
             Мы не отдаем заказы случайным агрегаторам. Наши курьеры оснащены термосумками с постоянным подогревом до 70°C, а коробки имеют диффузоры пара, чтобы корочка сохраняла фирменный хруст.
           </p>
-        </div>
+        </motion.div>
 
-        {/* 3 Technological Standards Strip (Horizontal High Craft) */}
+        {/* 3 Technological Standards Strip with Staggered Entrance */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-6 rounded-2xl border border-border bg-card/60 flex flex-col justify-between">
-            <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4">
-              <Flame className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold font-serif text-foreground">
-                Подогрев 70°C в термосумке
-              </h3>
-              <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                Внутри каждой сумки установлен термоэлемент. Пицца не успевает остыть даже в снег и дождь: сыр тянется шёлком, а сырный бортик остается мягким.
-              </p>
-            </div>
-            <div className="mt-4 pt-4 border-t border-border/60 text-xs font-mono text-primary font-semibold">
-              Температура при вручении ≥ 65°C
-            </div>
-          </div>
-
-          <div className="p-6 rounded-2xl border border-border bg-card/60 flex flex-col justify-between">
-            <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4">
-              <Wind className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold font-serif text-foreground">
-                Коробки с выводом пара
-              </h3>
-              <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                Специальная микроперфорация отводит конденсат наружу, не давая пару оседать каплями на дно. Бортик остается хрустящим, а не размокшим.
-              </p>
-            </div>
-            <div className="mt-4 pt-4 border-t border-border/60 text-xs font-mono text-primary font-semibold">
-              100% защита от влажного теста
-            </div>
-          </div>
-
-          <div className="p-6 rounded-2xl border border-border bg-card/60 flex flex-col justify-between">
-            <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4">
-              <Truck className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold font-serif text-foreground">
-                Собственные байкеры и курьеры
-              </h3>
-              <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                Не собираем по пути 5 сторонних заказов. Курьер забирает пиццу прямо с лопаты пиццайоло и мчит по оптимальному маршруту только к вам.
-              </p>
-            </div>
-            <div className="mt-4 pt-4 border-t border-border/60 text-xs font-mono text-primary font-semibold">
-              Среднее время: 31 минута
-            </div>
-          </div>
+          {pillars.map((pillar, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{
+                type: 'spring',
+                stiffness: 400,
+                damping: 28,
+                delay: idx * 0.1,
+              }}
+              className="p-6 rounded-2xl border border-border bg-card/60 flex flex-col justify-between hover:border-primary/40 transition-colors"
+            >
+              <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4">
+                {pillar.icon}
+              </div>
+              <div>
+                <h3 className="text-lg font-bold font-serif text-foreground">
+                  {pillar.title}
+                </h3>
+                <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+                  {pillar.desc}
+                </p>
+              </div>
+              <div className="mt-4 pt-4 border-t border-border/60 text-xs font-mono text-primary font-semibold">
+                {pillar.badge}
+              </div>
+            </motion.div>
+          ))}
         </div>
 
-        {/* Interactive Delivery Calculator & Zone Simulator */}
-        <div className="mt-12 rounded-3xl border border-border bg-card p-6 sm:p-10 shadow-lg">
+        {/* Interactive Delivery Calculator & Zone Simulator with Smooth Rise */}
+        <motion.div
+          initial={{ opacity: 0, y: 35 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{ type: 'spring', stiffness: 380, damping: 28, delay: 0.15 }}
+          className="mt-12 rounded-3xl border border-border bg-card p-6 sm:p-10 shadow-lg"
+        >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
             {/* Left Column: Interactive Address Finder & Live Calculation */}
@@ -214,7 +228,7 @@ export const DeliveryZoneSection: React.FC = () => {
 
               {/* Dynamic Route Results Card */}
               {routeInfo && (
-                <div className="p-5 rounded-2xl border border-border/80 bg-background/90 space-y-4 animate-in fade-in duration-200">
+                <div className="p-5 rounded-2xl border border-border/80 bg-background/90 space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-border">
                     <div className="flex items-center gap-2.5">
                       <div className="w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
@@ -354,7 +368,7 @@ export const DeliveryZoneSection: React.FC = () => {
             </div>
 
           </div>
-        </div>
+        </motion.div>
 
       </div>
     </section>

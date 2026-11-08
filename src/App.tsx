@@ -12,6 +12,7 @@ import { FaqSection } from './components/FaqSection'
 import { Footer } from './components/Footer'
 import { PizzaCustomizerModal } from './components/PizzaCustomizerModal'
 import { CartDrawer } from './components/CartDrawer'
+import { ToastNotification } from './components/ui/ToastNotification'
 import type { MenuItem } from './types/pizza'
 
 function MainContent() {
@@ -31,7 +32,7 @@ function MainContent() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-primary/20 selection:text-primary">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-primary/20 selection:text-primary overflow-x-hidden w-full max-w-full">
       {/* Navigation */}
       <Navbar
         onOpenCustomizer={() => handleOpenCustomizer(null)}
@@ -39,7 +40,7 @@ function MainContent() {
       />
 
       {/* Main Sections */}
-      <main className="flex-1">
+      <main className="flex-1 w-full max-w-full overflow-x-hidden">
         <Hero
           onOpenCustomizer={() => handleOpenCustomizer(null)}
           onOpenReservation={handleOpenReservation}
@@ -64,6 +65,7 @@ function MainContent() {
         initialItem={customizerItem}
       />
       <CartDrawer />
+      <ToastNotification />
     </div>
   )
 }

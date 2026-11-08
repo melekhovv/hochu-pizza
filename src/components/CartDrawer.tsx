@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import {
   X,
   Plus,
@@ -51,7 +52,19 @@ export const CartDrawer: React.FC = () => {
   const [comment, setComment] = useState('')
   const [orderNumber, setOrderNumber] = useState('')
 
-  if (!isCartOpen) return null
+  const resetAll = React.useCallback(() => {
+    setCheckoutStep('cart')
+    closeCart()
+  }, [closeCart])
+
+  useEffect(() => {
+    if (!isCartOpen) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') resetAll()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isCartOpen, resetAll])
 
   const handleApplyPromo = (e: React.FormEvent) => {
     e.preventDefault()
@@ -71,11 +84,6 @@ export const CartDrawer: React.FC = () => {
     clearCart()
   }
 
-  const resetAll = () => {
-    setCheckoutStep('cart')
-    closeCart()
-  }
-
   // Progress percentage for free delivery
   const progressPercent = Math.min(
     100,
@@ -83,11 +91,36 @@ export const CartDrawer: React.FC = () => {
   )
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-xs flex justify-end animate-in fade-in duration-200">
-      <div
-        className="w-full max-w-lg bg-card h-full shadow-2xl flex flex-col justify-between overflow-hidden border-l border-border"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <AnimatePresence>
+      {isCartOpen && (
+        <div className="fixed inset-0 z-50 overflow-hidden flex justify-end">
+          {/* Backdrop with spring/fade */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
+            className="fixed inset-0 bg-black/65 backdrop-blur-xs cursor-pointer"
+            onClick={resetAll}
+          />
+
+          {/* Drawer Panel with spring physics */}
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{
+              x: '100%',
+              transition: { type: 'spring', stiffness: 440, damping: 36 },
+            }}
+            transition={{
+              type: 'spring',
+              stiffness: 380,
+              damping: 32,
+              mass: 0.85,
+            }}
+            className="relative z-10 w-full max-w-lg bg-card h-full shadow-2xl flex flex-col justify-between overflow-hidden border-l border-border cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
         {/* Top Header */}
         <div className="p-5 border-b border-border flex items-center justify-between bg-muted/40">
           <div className="flex items-center gap-3">
@@ -564,7 +597,9 @@ export const CartDrawer: React.FC = () => {
             )}
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
+  )}
+</AnimatePresence>
   )
 }
