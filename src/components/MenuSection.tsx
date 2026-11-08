@@ -305,9 +305,9 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ onCustomizeItem }) => 
 
                     {/* Price & Action Buttons */}
                     <div className="flex items-center justify-between gap-3">
-                      <div>
+                      <div className="shrink-0">
                         <span className="text-xs text-muted-foreground block">Стоимость</span>
-                        <span className="font-mono text-2xl font-bold text-foreground tabular-nums">
+                        <span className="font-mono text-2xl font-bold text-foreground tabular-nums whitespace-nowrap">
                           {formatPrice(currentPrice)}
                         </span>
                       </div>

@@ -119,15 +119,15 @@ export const PizzaCustomizerModal: React.FC<PizzaCustomizerModalProps> = ({
             onClick={(e) => e.stopPropagation()}
           >
         {/* Modal Header */}
-        <div className="p-6 border-b border-border flex items-start justify-between bg-muted/40">
+        <div className="p-4 sm:p-6 border-b border-border flex items-start justify-between bg-muted/40">
           <div>
             <span className="text-xs font-semibold uppercase tracking-wider text-primary">
               {isBaseCustom ? 'Конструктор пиццы' : 'Настройка ингредиентов'}
             </span>
-            <h2 className="text-2xl font-bold font-serif text-foreground mt-0.5">
+            <h2 className="text-xl sm:text-2xl font-bold font-serif text-foreground mt-0.5">
               {defaultBaseItem.name}
             </h2>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1">
               Выберите основу, размер и любимые сыры, мясные деликатесы или зелень
             </p>
           </div>
@@ -143,50 +143,64 @@ export const PizzaCustomizerModal: React.FC<PizzaCustomizerModalProps> = ({
         </div>
 
         {/* Modal Body Scrollable */}
-        <div className="p-6 overflow-y-auto space-y-8 flex-1">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-6 sm:space-y-8 flex-1">
           {/* Step 1: Size */}
           <div>
             <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider flex items-center gap-2">
               <span>1. Диаметр пиццы</span>
             </h3>
-            <div className="grid grid-cols-2 gap-3 mt-3">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 mt-3">
               <button
                 type="button"
                 onClick={() => setSize(28)}
-                className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                className={`p-3 sm:p-4 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                   size === 28
                     ? 'border-primary bg-primary/5 ring-1 ring-primary'
                     : 'border-border bg-card hover:bg-muted/30'
                 }`}
               >
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-foreground">28 см (Классика)</span>
-                  <span className="font-mono text-sm tabular-nums text-foreground">
-                    {formatPrice(defaultBaseItem.basePrice)}
-                  </span>
+                <div>
+                  <div className="flex items-baseline justify-between gap-1">
+                    <span className="font-bold text-sm sm:text-base text-foreground leading-snug">
+                      28 см
+                    </span>
+                    <span className="font-mono text-sm sm:text-base font-bold tabular-nums text-foreground whitespace-nowrap">
+                      {formatPrice(defaultBaseItem.basePrice)}
+                    </span>
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-0.5">
+                    Классика
+                  </div>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  1–2 человека • ~{defaultBaseItem.weightGrams} г
+                <p className="text-[11px] sm:text-xs text-muted-foreground mt-2 border-t border-border/40 pt-1.5 truncate">
+                  1–2 чел. • ~{defaultBaseItem.weightGrams}&nbsp;г
                 </p>
               </button>
 
               <button
                 type="button"
                 onClick={() => setSize(33)}
-                className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                className={`p-3 sm:p-4 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                   size === 33
                     ? 'border-primary bg-primary/5 ring-1 ring-primary'
                     : 'border-border bg-card hover:bg-muted/30'
                 }`}
               >
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-foreground">33 см (Большая)</span>
-                  <span className="font-mono text-sm tabular-nums text-foreground">
-                    {formatPrice(defaultBaseItem.priceLarge || defaultBaseItem.basePrice + 200)}
-                  </span>
+                <div>
+                  <div className="flex items-baseline justify-between gap-1">
+                    <span className="font-bold text-sm sm:text-base text-foreground leading-snug">
+                      33 см
+                    </span>
+                    <span className="font-mono text-sm sm:text-base font-bold tabular-nums text-foreground whitespace-nowrap">
+                      {formatPrice(defaultBaseItem.priceLarge || defaultBaseItem.basePrice + 200)}
+                    </span>
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-0.5">
+                    Большая
+                  </div>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  2–3 человека • ~{defaultBaseItem.weightLargeGrams || defaultBaseItem.weightGrams + 140} г
+                <p className="text-[11px] sm:text-xs text-muted-foreground mt-2 border-t border-border/40 pt-1.5 truncate">
+                  2–3 чел. • ~{defaultBaseItem.weightLargeGrams || defaultBaseItem.weightGrams + 140}&nbsp;г
                 </p>
               </button>
             </div>
@@ -197,21 +211,21 @@ export const PizzaCustomizerModal: React.FC<PizzaCustomizerModalProps> = ({
             <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">
               2. Бортик и тип теста
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 mt-3">
               <button
                 type="button"
                 onClick={() => setCrust('traditional')}
-                className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
+                className={`p-3 sm:p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
                   crust === 'traditional'
                     ? 'border-primary bg-primary/5 ring-1 ring-primary'
                     : 'border-border bg-card hover:bg-muted/30'
                 }`}
               >
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center gap-2">
                   <span className="font-medium text-foreground text-sm">
                     Неаполитанский бортик
                   </span>
-                  <span className="text-xs text-muted-foreground">Бесплатно</span>
+                  <span className="text-xs text-muted-foreground shrink-0 whitespace-nowrap">Бесплатно</span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-0.5">
                   Воздушный, с характерным леопардовым припёком
@@ -221,17 +235,17 @@ export const PizzaCustomizerModal: React.FC<PizzaCustomizerModalProps> = ({
               <button
                 type="button"
                 onClick={() => setCrust('cheese_crust')}
-                className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
+                className={`p-3 sm:p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
                   crust === 'cheese_crust'
                     ? 'border-primary bg-primary/5 ring-1 ring-primary'
                     : 'border-border bg-card hover:bg-muted/30'
                 }`}
               >
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center gap-2">
                   <span className="font-medium text-foreground text-sm">
                     Сырный бортик моцарелла
                   </span>
-                  <span className="font-mono text-xs font-semibold text-primary">+160 ₽</span>
+                  <span className="font-mono text-xs font-semibold text-primary shrink-0 whitespace-nowrap">+160&nbsp;₽</span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-0.5">
                   Тянущийся сыр Fior di Latte запекается внутри бортика
@@ -265,7 +279,7 @@ export const PizzaCustomizerModal: React.FC<PizzaCustomizerModalProps> = ({
                         : 'border-border bg-card hover:bg-muted/40 text-foreground/90'
                     }`}
                   >
-                    <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="flex items-center gap-2.5 min-w-0 pr-2">
                       <div
                         className={`w-4 h-4 rounded flex items-center justify-center shrink-0 border ${
                           isSelected
@@ -278,8 +292,8 @@ export const PizzaCustomizerModal: React.FC<PizzaCustomizerModalProps> = ({
                       <span className="text-sm truncate">{topping.name}</span>
                     </div>
 
-                    <span className="font-mono text-xs font-semibold tabular-nums text-foreground shrink-0 ml-2">
-                      +{topping.price} ₽
+                    <span className="font-mono text-xs font-semibold tabular-nums text-foreground shrink-0 whitespace-nowrap ml-2">
+                      +{topping.price}&nbsp;₽
                     </span>
                   </button>
                 )
@@ -303,12 +317,12 @@ export const PizzaCustomizerModal: React.FC<PizzaCustomizerModalProps> = ({
         </div>
 
         {/* Modal Footer with Live Summary & Add Button */}
-        <div className="p-6 border-t border-border bg-muted/40 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center justify-between w-full sm:w-auto sm:flex-col sm:items-start">
-            <span className="text-xs text-muted-foreground">
-              Итоговый вес: ~{calculatedWeight} г
+        <div className="p-4 sm:p-6 border-t border-border bg-muted/40 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+          <div className="flex items-center justify-between w-full sm:w-auto sm:flex-col sm:items-start gap-1">
+            <span className="text-xs text-muted-foreground whitespace-nowrap">
+              Итоговый вес: ~{calculatedWeight}&nbsp;г
             </span>
-            <div className="font-mono text-2xl font-bold text-foreground tabular-nums">
+            <div className="font-mono text-2xl font-bold text-foreground tabular-nums whitespace-nowrap">
               {formatPrice(calculatedTotal)}
             </div>
           </div>

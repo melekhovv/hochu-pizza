@@ -16,8 +16,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenCustomizer, onOpenReservation 
           
           {/* Left Column: Editorial Headline & Actions */}
           <motion.div
-            initial={{ opacity: 0, x: -25 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 380, damping: 28, duration: 0.7 }}
             className="lg:col-span-7 flex flex-col justify-center text-left"
           >
@@ -136,10 +136,10 @@ export const Hero: React.FC<HeroProps> = ({ onOpenCustomizer, onOpenReservation 
 
           {/* Right Column: Hero Visual Craft Composition with 3D Float */}
           <motion.div
-            initial={{ opacity: 0, x: 30, scale: 0.96 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
+            initial={{ opacity: 0, y: 25, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ type: 'spring', stiffness: 350, damping: 26, delay: 0.2 }}
-            className="lg:col-span-5 relative"
+            className="lg:col-span-5 relative w-full"
           >
             <div className="relative rounded-2xl overflow-hidden border border-border bg-card shadow-xl shadow-foreground/5 group">
               <img
@@ -150,8 +150,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenCustomizer, onOpenReservation 
               />
 
               {/* Bottom Card Detail Strip */}
-              <div className="p-5 border-t border-border bg-card/95 backdrop-blur-sm flex items-center justify-between">
-                <div>
+              <div className="p-4 sm:p-5 border-t border-border bg-card/95 backdrop-blur-sm flex items-center justify-between gap-3">
+                <div className="min-w-0 flex-1">
                   <div className="text-xs font-semibold uppercase tracking-wider text-primary">
                     Фирменный хит
                   </div>
@@ -163,10 +163,10 @@ export const Hero: React.FC<HeroProps> = ({ onOpenCustomizer, onOpenReservation 
                   </div>
                 </div>
 
-                <div className="text-right">
+                <div className="text-right shrink-0 whitespace-nowrap pl-2">
                   <div className="text-xs text-muted-foreground">Цена</div>
-                  <div className="font-mono text-lg font-bold text-foreground tabular-nums">
-                    690 ₽
+                  <div className="font-mono text-lg font-bold text-foreground tabular-nums whitespace-nowrap">
+                    690&nbsp;₽
                   </div>
                 </div>
               </div>
@@ -177,10 +177,10 @@ export const Hero: React.FC<HeroProps> = ({ onOpenCustomizer, onOpenReservation 
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.5 }}
-              className="mt-4 flex items-center gap-2.5 px-3 py-2 text-xs text-muted-foreground bg-muted/50 rounded-lg border border-border/60"
+              className="mt-4 flex items-center gap-2.5 px-3 py-2 text-xs text-muted-foreground bg-muted/50 rounded-lg border border-border/60 min-w-0 overflow-hidden"
             >
               <ShieldCheck className="w-4 h-4 text-primary shrink-0" />
-              <span>Мука из Неаполя • Свежая моцарелла каждое утро • Без заморозки</span>
+              <span className="truncate">Мука из Неаполя • Свежая моцарелла каждое утро • Без заморозки</span>
             </motion.div>
           </motion.div>
 
