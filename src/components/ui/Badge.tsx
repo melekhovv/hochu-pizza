@@ -14,7 +14,7 @@ export function Badge({
     default: 'bg-primary text-primary-foreground border-transparent',
     secondary: 'bg-secondary text-secondary-foreground border-transparent',
     outline: 'text-foreground border-border bg-transparent',
-    destructive: 'bg-destructive/15 text-destructive border-destructive/20',
+    destructive: 'bg-destructive text-destructive-foreground border-transparent shadow-xs',
   }
 
   return (

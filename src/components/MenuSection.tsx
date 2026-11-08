@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { Plus, Sliders } from 'lucide-react'
+import { Plus, Sliders, Flame } from 'lucide-react'
 import { MENU_ITEMS } from '../data/menu'
 import type { MenuItem, PizzaSize } from '../types/pizza'
 import { useCart } from '../context/CartContext'
@@ -225,7 +225,11 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ onCustomizeItem }) => 
                       </Badge>
                     )}
                     {item.isSpicy && (
-                      <Badge variant="destructive" className="text-[11px]">
+                      <Badge
+                        variant="destructive"
+                        className="bg-red-600 text-white font-semibold text-[11px] shadow-sm border border-red-500/50 flex items-center gap-1"
+                      >
+                        <Flame className="w-3 h-3 text-amber-200 fill-amber-300/80 shrink-0" />
                         Острая
                       </Badge>
                     )}
