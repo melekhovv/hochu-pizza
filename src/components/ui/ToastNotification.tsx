@@ -29,15 +29,15 @@ export const ToastNotification: React.FC = () => {
             damping: 26,
             mass: 0.8,
           }}
-          className="fixed bottom-6 right-6 z-50 max-w-sm w-full mx-4 sm:mx-0"
+          className="fixed bottom-6 inset-x-4 sm:inset-x-auto sm:left-auto sm:right-6 z-50 max-w-sm w-auto sm:w-full mx-auto sm:mx-0 pointer-events-auto"
         >
-          <div className="bg-card/95 border border-border/80 shadow-2xl backdrop-blur-md rounded-2xl p-4 flex items-center justify-between gap-3 text-foreground">
-            <div className="flex items-center gap-3 min-w-0">
+          <div className="bg-card/95 border border-border/80 shadow-2xl backdrop-blur-md rounded-2xl p-3.5 sm:p-4 flex items-center justify-between gap-2.5 sm:gap-3 text-foreground">
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
               {toast.image ? (
                 <img
                   src={toast.image}
                   alt=""
-                  className="w-12 h-12 rounded-xl object-cover border border-border/50 shrink-0"
+                  className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl object-cover border border-border/50 shrink-0"
                 />
               ) : (
                 <div
@@ -50,10 +50,10 @@ export const ToastNotification: React.FC = () => {
               )}
 
               <div className="min-w-0 flex-1">
-                <span className="text-xs font-semibold uppercase tracking-wider text-primary block">
+                <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-primary block truncate">
                   {toast.title}
                 </span>
-                <p className="text-sm font-medium text-foreground truncate mt-0.5">
+                <p className="text-xs sm:text-sm font-medium text-foreground truncate mt-0.5">
                   {toast.subtitle}
                 </p>
                 {toast.price && (
@@ -64,7 +64,7 @@ export const ToastNotification: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               {isAdd && (
                 <button
                   type="button"
@@ -72,7 +72,7 @@ export const ToastNotification: React.FC = () => {
                     dismissToast()
                     openCart()
                   }}
-                  className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+                  className="px-2.5 sm:px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs shrink-0"
                 >
                   <ShoppingBag className="w-3.5 h-3.5" />
                   <span>Корзина</span>
