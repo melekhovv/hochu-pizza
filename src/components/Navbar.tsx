@@ -27,9 +27,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCustomizer, onOpenReservat
 
   const navLinks = [
     { value: 'menu', label: 'Меню', href: '#menu' },
-    { value: 'craft', label: 'О печи и тесте', href: '#craft' },
     { value: 'customizer', label: 'Конструктор', action: onOpenCustomizer },
-    { value: 'delivery', label: 'Доставка', href: '#delivery' },
     { value: 'reservation', label: 'Бронь стола', action: onOpenReservation },
     { value: 'reviews', label: 'Отзывы', href: '#reviews' },
     { value: 'contacts', label: 'Контакты', href: '#contacts' },
@@ -37,7 +35,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCustomizer, onOpenReservat
 
   // Sync active nav item with scroll position
   useEffect(() => {
-    const sectionIds = ['contacts', 'reviews', 'reservation', 'delivery', 'craft', 'menu']
+    const sectionIds = ['contacts', 'reviews', 'reservation', 'menu']
     const handleScrollNav = () => {
       const scrollPos = window.scrollY + 200
       for (const id of sectionIds) {

@@ -4,8 +4,6 @@ import { ThemeProvider } from './context/ThemeContext'
 import { Navbar } from './components/Navbar'
 import { Hero } from './components/Hero'
 import { MenuSection } from './components/MenuSection'
-import { CraftStorySection } from './components/CraftStorySection'
-import { DeliveryZoneSection } from './components/DeliveryZoneSection'
 import { ReservationSection } from './components/ReservationSection'
 import { ReviewsSection } from './components/ReviewsSection'
 import { FaqSection } from './components/FaqSection'
@@ -48,8 +46,6 @@ function MainContent() {
         <MenuSection
           onCustomizeItem={(item) => handleOpenCustomizer(item)}
         />
-        <CraftStorySection />
-        <DeliveryZoneSection />
         <ReservationSection />
         <ReviewsSection />
         <FaqSection />

@@ -51,16 +51,6 @@ export const Footer: React.FC = () => {
                 </a>
               </li>
               <li>
-                <a href="#craft" className="hover:text-primary transition-colors">
-                  О тесте и печи
-                </a>
-              </li>
-              <li>
-                <a href="#delivery" className="hover:text-primary transition-colors">
-                  Зоны доставки
-                </a>
-              </li>
-              <li>
                 <a href="#reservation" className="hover:text-primary transition-colors">
                   Бронь столика
                 </a>
