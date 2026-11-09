@@ -51,6 +51,7 @@ export const CartDrawer: React.FC = () => {
   const [needCutlery, setNeedCutlery] = useState(true)
   const [comment, setComment] = useState('')
   const [orderNumber, setOrderNumber] = useState('')
+  const [cartHoneypot, setCartHoneypot] = useState('')
 
   const resetAll = React.useCallback(() => {
     setCheckoutStep('cart')
@@ -75,7 +76,10 @@ export const CartDrawer: React.FC = () => {
 
   const handleCompleteOrder = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!name.trim() || !phone.trim()) return
+    if (cartHoneypot.trim()) return
+    const cleanName = name.replace(/<[^>]*>?/gm, '').trim()
+    const cleanPhone = phone.replace(/<[^>]*>?/gm, '').trim()
+    if (!cleanName || !cleanPhone) return
     if (orderType === 'delivery' && !street.trim()) return
 
     const randomId = `#HP-${Math.floor(100000 + Math.random() * 900000)}`
@@ -317,6 +321,17 @@ export const CartDrawer: React.FC = () => {
           {/* STEP 2: CHECKOUT FORM */}
           {checkoutStep === 'checkout' && (
             <form id="checkout-form" onSubmit={handleCompleteOrder} className="space-y-5">
+              {/* Bot trap honeypot */}
+              <input
+                type="text"
+                name="user_email_trap"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                value={cartHoneypot}
+                onChange={(e) => setCartHoneypot(e.target.value)}
+                className="hidden"
+              />
               {/* Delivery or Pickup Switch */}
               <div className="grid grid-cols-2 gap-2 p-1 bg-muted rounded-xl border border-border">
                 <button
