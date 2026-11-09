@@ -5,42 +5,15 @@ import {
   Calendar,
   User,
   Phone,
-  Flame,
-  Sparkles,
-  SunMedium,
   ChevronDown,
 } from 'lucide-react'
 import { Button } from './ui/Button'
 import { Input } from './ui/Input'
 
-const ZONES = {
-  oven: {
-    id: 'oven',
-    name: 'У дровяной печи',
-    badge: '450°C огонь',
-    icon: <Flame className="w-4 h-4" />,
-  },
-  cosy: {
-    id: 'cosy',
-    name: 'Уютный зал',
-    badge: 'Тишина',
-    icon: <Sparkles className="w-4 h-4" />,
-  },
-  terrace: {
-    id: 'terrace',
-    name: 'Панорамная терраса',
-    badge: 'Панорама',
-    icon: <SunMedium className="w-4 h-4" />,
-  },
-} as const
-
-type ZoneKey = keyof typeof ZONES
-
 export const ReservationSection: React.FC = () => {
   const [date, setDate] = useState('today')
   const [time, setTime] = useState('19:00')
   const [guests, setGuests] = useState(2)
-  const [zone, setZone] = useState<ZoneKey>('oven')
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -59,8 +32,6 @@ export const ReservationSection: React.FC = () => {
     '21:00',
     '21:45',
   ]
-
-  const currentZone = ZONES[zone]
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -133,7 +104,7 @@ export const ReservationSection: React.FC = () => {
                 Столик успешно забронирован!
               </h3>
               <p className="text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
-                {name}, ждем вас {getDateLabel(date).toLowerCase()} в {time}. Столик на {guests} персон в зоне «{currentZone.name}» готов к вашему визиту.
+                {name}, ждем вас {getDateLabel(date).toLowerCase()} в {time}. Столик на {guests} {guests === 1 ? 'персону' : guests < 5 ? 'персоны' : 'персон'} готов к вашему визиту.
               </p>
               <div className="p-4 rounded-xl border border-border bg-card max-w-xs mx-auto text-xs font-mono">
                 Номер брони: <span className="font-bold text-foreground">{reservationCode}</span>
@@ -229,45 +200,7 @@ export const ReservationSection: React.FC = () => {
 
               </div>
 
-              {/* 3. Зона посадки (Интерактивные карточки) */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
-                  Зона посадки
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  {(Object.keys(ZONES) as ZoneKey[]).map((zoneKey) => {
-                    const z = ZONES[zoneKey]
-                    const isSelected = zone === zoneKey
-                    return (
-                      <button
-                        key={zoneKey}
-                        type="button"
-                        onClick={() => setZone(zoneKey)}
-                        className={`p-3 rounded-xl border text-left transition-all duration-150 cursor-pointer flex flex-col justify-between ${
-                          isSelected
-                            ? 'border-primary bg-primary/10 text-foreground ring-1 ring-primary shadow-xs'
-                            : 'border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between w-full mb-1">
-                          <span className={isSelected ? 'text-primary' : 'text-muted-foreground'}>
-                            {z.icon}
-                          </span>
-                          {isSelected && (
-                            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                          )}
-                        </div>
-                        <span className="text-xs font-bold block">{z.name}</span>
-                        <span className="text-[11px] text-muted-foreground line-clamp-1 mt-0.5">
-                          {z.badge}
-                        </span>
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-
-              {/* 4. Контактные данные (Имя и Телефон) */}
+              {/* 3. Контактные данные (Имя и Телефон) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
                   <label htmlFor="res-name" className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
@@ -309,12 +242,12 @@ export const ReservationSection: React.FC = () => {
                 </div>
               </div>
 
-              {/* 5. Live Booking Summary Strip */}
+              {/* 4. Live Booking Summary Strip */}
               <div className="p-3.5 rounded-xl bg-card border border-border/80 flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2 text-foreground font-medium">
                   <Calendar className="w-4 h-4 text-primary shrink-0" />
                   <span>
-                    {getDateLabel(date)}, {time} • {guests} чел. • {currentZone.name}
+                    {getDateLabel(date)}, {time} • {guests} {guests === 1 ? 'персона' : guests < 5 ? 'персоны' : 'персон'}
                   </span>
                 </div>
                 <span className="text-emerald-500 font-semibold font-mono hidden sm:inline">
@@ -329,7 +262,7 @@ export const ReservationSection: React.FC = () => {
                 size="lg"
                 className="w-full h-12 font-semibold text-base shadow-md cursor-pointer justify-center"
               >
-                <span>Подтвердить бронирование столика</span>
+                <span>Подтвердить</span>
               </Button>
             </form>
           )}
